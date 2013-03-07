@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/coopernurse/gorp"
 	_ "github.com/mattn/go-sqlite3"
@@ -177,7 +178,15 @@ func main() {
 	initdb()
 	j := new(Jack)
 	j.Id = 2
+	b, err := json.Marshal(j)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	k := json.Unmarshal(b)
+	fmt.Println(string(b))
 	fmt.Printf("%d", j.Id)
+	fmt.Printf("%d", k.Id)
 	http.HandleFunc("/login/", login)
 
 	http.Handle("/", http.HandlerFunc(HelloServer))
