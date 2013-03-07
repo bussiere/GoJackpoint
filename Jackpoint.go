@@ -1,9 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/coopernurse/gorp"
-	sql "github.com/kuroneko/gosqlite3"
+	_ "github.com/mattn/go-sqlite3"
 	"io"
 	"net/http"
 	"strconv"
@@ -160,11 +161,16 @@ func login(c http.ResponseWriter, req *http.Request) {
 }
 
 func initdb() {
-	db := sql.Open("test.sqlite", 0)
+	db, err := sql.Open("sqlite3", "foo.db")
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
 
 	// construct a gorp DbMap
-	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.SqliteDialect{"InnoDB", "UTF8"}}
+	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.SqliteDialect{}}
 	t1 := dbmap.AddTableWithName(Jack{}, "Jack_test").SetKeys(true, "Id")
+	fmt.Printf(t1.TableName)
+	dbmap.CreateTables()
 }
 
 func main() {
