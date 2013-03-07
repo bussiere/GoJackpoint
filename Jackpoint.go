@@ -183,12 +183,13 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	k := json.Unmarshal(b)
+	var s Jack
+	json.Unmarshal(b, &s)
 	fmt.Println(string(b))
-	fmt.Printf("%d", j.Id)
-	fmt.Printf("%d", k.Id)
+	fmt.Printf("%d\n", j.Id)
+	fmt.Printf("%d\n", s.Id)
 	http.HandleFunc("/login/", login)
 
 	http.Handle("/", http.HandlerFunc(HelloServer))
-	http.ListenAndServe(":8050", nil)
+	//http.ListenAndServe(":8050", nil)
 }
