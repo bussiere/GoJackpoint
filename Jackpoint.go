@@ -326,23 +326,25 @@ func decryptAes(message string, clef string) {
 
 }
 
-func EncodeB64(message string) {
+func EncodeB64(message string) (retour string) {
 
 	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(message)))
 
 	base64.StdEncoding.Encode(base64Text, []byte(message))
 
-	fmt.Printf("base64: %s\n", base64Text)
+	return string(base64Text)
 
 }
 
-func DecodeB64(message string) {
+func DecodeB64(message string) (retour string) {
 
-	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(message)))
+	base64Text := make([]byte, base64.StdEncoding.DecodedLen(len(message)))
 
 	base64.StdEncoding.Decode(base64Text, []byte(message))
 
 	fmt.Printf("base64: %s\n", base64Text)
+
+	return string(base64Text)
 
 }
 
@@ -364,6 +366,7 @@ func initdb() {
 }
 
 func test() {
+	var test string
 	j := new(Jack)
 	j.Id = 2
 	b, err := json.Marshal(j)
@@ -378,6 +381,10 @@ func test() {
 	fmt.Printf("%d\n", s.Id)
 
 	j.Key_private = "toto"
+	test = EncodeB64(j.Key_private)
+	fmt.Printf("base64: %s\n", test)
+	test = DecodeB64(j.Key_private)
+	fmt.Printf("base64: %s\n", test)
 }
 
 func mail() {
