@@ -18,7 +18,7 @@ func main() {
 
 	// Load the plaintext message you want to encrypt.
 
-	plaintext := []byte("hello, world")
+	plaintext := []byte("hello, world die die die die die die die die")
 
 	if len(os.Args) > 1 {
 
@@ -28,7 +28,8 @@ func main() {
 
 	// Setup a key that will encrypt the other text.
 
-	key_text := "32o4908go293hohg98fh40gh"
+	key_text := "32o4908go293hohg98fh40ghrrrrrrrr"
+	fmt.Println(len(key_text))
 
 	if len(os.Args) > 2 {
 
