@@ -30,8 +30,16 @@ type Jack struct {
 	Message_Id            []rune
 	Statut                string
 	Avatar                string
-	ServeurSmtp           []rune
-	ServeurPop            []rune
+}
+
+type Configuration struct {
+	ServeurSmtp []rune
+	ServeurPop  []rune
+}
+
+type Configuration_Admin struct {
+	Email      string
+	Key_public string
 }
 
 type Tag struct {
@@ -45,6 +53,8 @@ type ServeurSmtp struct {
 	Adresse rune
 	Login   rune
 	MDP     rune
+	Created int64
+	Updated int64
 }
 
 type ServeurPop struct {
@@ -53,6 +63,8 @@ type ServeurPop struct {
 	Adresse rune
 	Login   rune
 	MDP     rune
+	Created int64
+	Updated int64
 }
 
 type Admin struct {
@@ -60,6 +72,7 @@ type Admin struct {
 	Key_public  string
 	Key_private string
 	Jack_Id     rune
+	Email       rune
 	Created     int64
 	Updated     int64
 }
@@ -72,6 +85,7 @@ type Hand struct {
 	Carac_Jack_Id []rune
 	Item_Jack_Id  []rune
 	Message       string
+	Tag_Id        []rune
 }
 
 type Skill struct {
@@ -80,6 +94,7 @@ type Skill struct {
 	Updated     int64
 	Nom         string
 	Description string
+	Tag_Id      []rune
 }
 
 type Filiation_Skill struct {
@@ -96,6 +111,7 @@ type Carac struct {
 	Updated     int64
 	Nom         string
 	Description string
+	Tag_Id      []rune
 }
 
 type Item struct {
@@ -104,6 +120,7 @@ type Item struct {
 	Updated     int64
 	Nom         string
 	Description string
+	Tag_Id      []rune
 }
 
 type Item_Carac struct {
@@ -168,7 +185,7 @@ type Admin_Private struct {
 	Updated               int64
 }
 
-func HelloServer(c http.ResponseWriter, req *http.Request) {
+func IndexPage(c http.ResponseWriter, req *http.Request) {
 
 	result := "<html><body><form action='/login/' method='post'><table><tr><td><label for='login'><strong>Nom de compte</strong></label></td><td><input type='text' name='login' id='login'/></td></tr><tr><td><label for='pass'><strong>Mot de passe</strong></label></td><td><input type='password' name='pass' id='pass'/></td></tr></table><input type='submit' name='connexion' value='Se connecter'/></form></body></html>"
 	c.Header().Set("Content-Type", "text/html")
@@ -176,13 +193,25 @@ func HelloServer(c http.ResponseWriter, req *http.Request) {
 	io.WriteString(c, result)
 }
 
-func login(c http.ResponseWriter, req *http.Request) {
-	body := req.FormValue("login")
-	fmt.Printf(body)
+func ConfigurationPage(c http.ResponseWriter, req *http.Request) {
+
+	result := "<html><body><form action='/login/' method='post'><table><tr><td><label for='login'><strong>Nom de compte</strong></label></td><td><input type='text' name='login' id='login'/></td></tr><tr><td><label for='pass'><strong>Mot de passe</strong></label></td><td><input type='password' name='pass' id='pass'/></td></tr></table><input type='submit' name='connexion' value='Se connecter'/></form></body></html>"
+	c.Header().Set("Content-Type", "text/html")
+	c.Header().Set("Content-Length", strconv.Itoa(len(result)))
+	io.WriteString(c, result)
+}
+
+func loginPage(c http.ResponseWriter, req *http.Request) {
+	login := req.FormValue("login")
+	fmt.Printf(login)
 	result := ""
 	c.Header().Set("Content-Type", "text/html")
 	c.Header().Set("Content-Length", strconv.Itoa(len(result)))
 	io.WriteString(c, result)
+
+}
+
+func login(email string, password string) {
 
 }
 
@@ -198,6 +227,28 @@ func initdb() {
 	fmt.Printf(t1.TableName)
 	dbmap.CreateTables()
 }
+
+
+func test()
+{
+		j := new(Jack)
+	j.Id = 2
+	b, err := json.Marshal(j)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	var s Jack
+	json.Unmarshal(b, &s)
+	fmt.Println(string(b))
+	fmt.Printf("%d\n", j.Id)
+	fmt.Printf("%d\n", s.Id)
+
+	j.Key_private = "toto"
+}
+
+
+func 
 
 func mail() {
 	// Set up authentication information.
@@ -223,20 +274,10 @@ func mail() {
 
 func main() {
 	initdb()
-	j := new(Jack)
-	j.Id = 2
-	b, err := json.Marshal(j)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	var s Jack
-	json.Unmarshal(b, &s)
-	fmt.Println(string(b))
-	fmt.Printf("%d\n", j.Id)
-	fmt.Printf("%d\n", s.Id)
-	http.HandleFunc("/login/", login)
 
-	http.Handle("/", http.HandlerFunc(HelloServer))
-	//http.ListenAndServe(":8050", nil)
+
+	http.Handle("/login/", http.HandleFunc(login))
+	http.Handle("/", http.HandlerFunc(IndexPage))
+	http.Handle("/configuration/", http.HandlerFunc(ConfigurationPage))
+	http.ListenAndServe(":8050", nil)
 }
