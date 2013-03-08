@@ -7,7 +7,9 @@ import (
 	"github.com/coopernurse/gorp"
 	_ "github.com/mattn/go-sqlite3"
 	"io"
+	"log"
 	"net/http"
+	"net/smtp"
 	"strconv"
 )
 
@@ -28,6 +30,20 @@ type Jack struct {
 	Message_Id            []rune
 	Statut                string
 	Avatar                string
+}
+
+type ServeurSmtp struct {
+	Email   rune
+	Adresse rune
+	Login   rune
+	MDP     rune
+}
+
+type ServeurPop struct {
+	Email   rune
+	Adresse rune
+	Login   rune
+	MDP     rune
 }
 
 type Admin struct {
@@ -172,6 +188,28 @@ func initdb() {
 	t1 := dbmap.AddTableWithName(Jack{}, "Jack_test").SetKeys(true, "Id")
 	fmt.Printf(t1.TableName)
 	dbmap.CreateTables()
+}
+
+func mail() {
+	// Set up authentication information.
+	auth := smtp.PlainAuth(
+		"",
+		"user@example.com",
+		"password",
+		"mail.example.com",
+	)
+	// Connect to the server, authenticate, set the sender and recipient,
+	// and send the email all in one step.
+	err := smtp.SendMail(
+		"mail.example.com:25",
+		auth,
+		"sender@example.org",
+		[]string{"recipient@example.net"},
+		[]byte("This is the email body."),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
