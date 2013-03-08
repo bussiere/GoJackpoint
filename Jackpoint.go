@@ -1,7 +1,10 @@
 package main
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/coopernurse/gorp"
@@ -10,8 +13,11 @@ import (
 	"log"
 	"net/http"
 	"net/smtp"
+	"os"
 	"strconv"
 )
+
+var commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
 
 type Jack struct {
 	Id                    rune
@@ -201,7 +207,7 @@ func ConfigurationPage(c http.ResponseWriter, req *http.Request) {
 	io.WriteString(c, result)
 }
 
-func loginPage(c http.ResponseWriter, req *http.Request) {
+func LoginPage(c http.ResponseWriter, req *http.Request) {
 	login := req.FormValue("login")
 	fmt.Printf(login)
 	result := ""
@@ -211,7 +217,136 @@ func loginPage(c http.ResponseWriter, req *http.Request) {
 
 }
 
-func login(email string, password string) {
+func encryptAes(message string, clef string) {
+
+	plaintext := []byte(message)
+
+	if len(os.Args) > 1 {
+
+		plaintext = []byte(os.Args[1])
+
+	}
+
+	// Setup a key that will encrypt the other text.
+
+	key_text := clef
+	fmt.Println(len(key_text))
+
+	if len(os.Args) > 2 {
+
+		key_text = os.Args[2]
+
+	}
+
+	// We chose our cipher type here in this case
+
+	// we are using AES.
+
+	c, err := aes.NewCipher([]byte(key_text))
+
+	if err != nil {
+
+		fmt.Printf("Error: NewCipher(%d bytes) = %s", len(key_text), err)
+
+		os.Exit(-1)
+
+	}
+
+	// We use the CFBEncrypter in order to encrypt
+
+	// the whole stream of plaintext using the
+
+	// cipher setup with c and a iv.
+
+	cfb := cipher.NewCFBEncrypter(c, commonIV)
+
+	ciphertext := make([]byte, len(plaintext))
+
+	cfb.XORKeyStream(ciphertext, plaintext)
+
+	fmt.Printf("%s=>%x\n", plaintext, ciphertext)
+
+	// We must now convert the ciphertext to base64
+
+	// this will allow for the encrypted data to be
+
+	// visible to copy and paste into the decrypter.
+
+	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(ciphertext)))
+
+	base64.StdEncoding.Encode(base64Text, []byte(ciphertext))
+
+	fmt.Printf("base64: %s\n", base64Text)
+}
+
+func decryptAes(message string, clef string) {
+
+	plaintext := []byte(message)
+
+	ciphertext := make([]byte, len(message))
+
+	if len(os.Args) > 1 {
+
+		plaintext = []byte(os.Args[1])
+
+	}
+
+	// Setup a key that will encrypt the other text.
+
+	key_text := clef
+	fmt.Println(len(key_text))
+
+	if len(os.Args) > 2 {
+
+		key_text = os.Args[2]
+
+	}
+
+	// We chose our cipher type here in this case
+
+	// we are using AES.
+
+	c, err := aes.NewCipher([]byte(key_text))
+
+	if err != nil {
+
+		fmt.Printf("Error: NewCipher(%d bytes) = %s", len(key_text), err)
+
+		os.Exit(-1)
+
+	}
+
+	cfbdec := cipher.NewCFBDecrypter(c, commonIV)
+
+	plaintextCopy := make([]byte, len(plaintext))
+
+	cfbdec.XORKeyStream(plaintextCopy, ciphertext)
+
+	fmt.Printf("%x=>%s\n", ciphertext, plaintextCopy)
+
+}
+
+func EncodeB64(message string) {
+
+	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(message)))
+
+	base64.StdEncoding.Encode(base64Text, []byte(message))
+
+	fmt.Printf("base64: %s\n", base64Text)
+
+}
+
+func DecodeB64(message string) {
+
+	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(message)))
+
+	base64.StdEncoding.Decode(base64Text, []byte(message))
+
+	fmt.Printf("base64: %s\n", base64Text)
+
+}
+
+func loginfunc(email string, password string) {
 
 }
 
@@ -228,10 +363,8 @@ func initdb() {
 	dbmap.CreateTables()
 }
 
-
-func test()
-{
-		j := new(Jack)
+func test() {
+	j := new(Jack)
 	j.Id = 2
 	b, err := json.Marshal(j)
 	if err != nil {
@@ -245,12 +378,6 @@ func test()
 	fmt.Printf("%d\n", s.Id)
 
 	j.Key_private = "toto"
-}
-
-
-func decrypt(message)
-{
-	
 }
 
 func mail() {
@@ -278,9 +405,9 @@ func mail() {
 func main() {
 	initdb()
 
-
-	http.Handle("/login/", http.HandleFunc(login))
+	http.Handle("/login/", http.HandlerFunc(LoginPage))
 	http.Handle("/", http.HandlerFunc(IndexPage))
 	http.Handle("/configuration/", http.HandlerFunc(ConfigurationPage))
-	http.ListenAndServe(":8050", nil)
+	test()
+	//http.ListenAndServe(":8050", nil)
 }
