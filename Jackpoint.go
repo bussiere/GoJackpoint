@@ -248,7 +248,10 @@ func test()
 }
 
 
-func 
+func decrypt(message)
+{
+	
+}
 
 func mail() {
 	// Set up authentication information.
