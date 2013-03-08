@@ -30,9 +30,17 @@ type Jack struct {
 	Message_Id            []rune
 	Statut                string
 	Avatar                string
+	ServeurSmtp           []rune
+	ServeurPop            []rune
+}
+
+type Tag struct {
+	Id  rune
+	Nom string
 }
 
 type ServeurSmtp struct {
+	Id      rune
 	Email   rune
 	Adresse rune
 	Login   rune
@@ -40,6 +48,7 @@ type ServeurSmtp struct {
 }
 
 type ServeurPop struct {
+	Id      rune
 	Email   rune
 	Adresse rune
 	Login   rune
