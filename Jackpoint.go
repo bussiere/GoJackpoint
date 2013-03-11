@@ -272,11 +272,11 @@ func encryptAes(message string, clef string) {
 
 	// visible to copy and paste into the decrypter.
 
-	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(ciphertext)))
+	// base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(ciphertext)))
 
-	base64.StdEncoding.Encode(base64Text, []byte(ciphertext))
+	// base64.StdEncoding.Encode(base64Text, []byte(ciphertext))
 
-	fmt.Printf("base64: %s\n", base64Text)
+	// fmt.Printf("base64: %s\n", base64Text)
 }
 
 func decryptAes(message string, clef string) {
@@ -328,23 +328,22 @@ func decryptAes(message string, clef string) {
 
 func EncodeB64(message string) (retour string) {
 
-	base64Text := make([]byte, base64.StdEncoding.EncodedLen(len(message)))
+	data := base64.StdEncoding.EncodeToString([]byte(message))
 
-	base64.StdEncoding.Encode(base64Text, []byte(message))
-
-	return string(base64Text)
+	fmt.Printf("%q\n", data)
+	return data
 
 }
 
 func DecodeB64(message string) (retour string) {
 
-	base64Text := make([]byte, base64.StdEncoding.DecodedLen(len(message)))
+	data, err := base64.StdEncoding.DecodeString(message)
+	if err != nil {
+		log.Fatal("error:", err)
+	}
 
-	base64.StdEncoding.Decode(base64Text, []byte(message))
-
-	fmt.Printf("base64: %s\n", base64Text)
-
-	return string(base64Text)
+	fmt.Printf("%q\n", data)
+	return string(data)
 
 }
 
@@ -381,9 +380,10 @@ func test() {
 	fmt.Printf("%d\n", s.Id)
 
 	j.Key_private = "toto"
+	fmt.Printf("base64: %s\n", j.Key_private)
 	test = EncodeB64(j.Key_private)
 	fmt.Printf("base64: %s\n", test)
-	test = DecodeB64(j.Key_private)
+	test = DecodeB64(test)
 	fmt.Printf("base64: %s\n", test)
 }
 
