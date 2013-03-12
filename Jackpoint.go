@@ -31,11 +31,19 @@ type Jack struct {
 	Skill_Jack_Private_Id []rune
 	Item_Jack_Private_Id  []rune
 	Password              string
-	Key_public            string
-	Key_private           string
+	Key_public            rune
+	Key_private           rune
 	Message_Id            []rune
 	Statut                string
 	Avatar                string
+}
+
+type Key_Public struct {
+	Key string
+}
+
+type Key_Private struct {
+	Key string
 }
 
 type Configuration struct {
@@ -217,6 +225,15 @@ func LoginPage(c http.ResponseWriter, req *http.Request) {
 
 }
 
+func concatene(first string, second string) (retour string) {
+	var (
+		buffer bytes.Buffer
+	)
+	buffer.WriteString(first)
+	buffer.WriteString(second)
+	return buffer.String()
+}
+
 func encryptAes(message string, clef string) {
 
 	plaintext := []byte(message)
@@ -368,6 +385,7 @@ func test() {
 	var test string
 	j := new(Jack)
 	j.Id = 2
+	j.Key_private = 1
 	b, err := json.Marshal(j)
 	if err != nil {
 		fmt.Println(err)
@@ -379,9 +397,21 @@ func test() {
 	fmt.Printf("%d\n", j.Id)
 	fmt.Printf("%d\n", s.Id)
 
-	j.Key_private = "toto"
+	c, err := json.Marshal(j.Key_private)
+	fmt.Println(string(c))
+
+	k := new(Key_Public)
+	k.Key = "titi"
+	c, err = json.Marshal(k)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(c))
+	j.Key_private = 2
 	fmt.Printf("base64: %s\n", j.Key_private)
-	test = EncodeB64(j.Key_private)
+	test = EncodeB64(string(j.Key_private))
 	fmt.Printf("base64: %s\n", test)
 	test = DecodeB64(test)
 	fmt.Printf("base64: %s\n", test)
