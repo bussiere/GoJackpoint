@@ -31,5 +31,15 @@ func main() {
 
 	fmt.Printf("%q\n", data2)
 
+	entity.PrivateKey.Serialize(&buffer)
+	data3 := base64.StdEncoding.EncodeToString([]byte(buffer.String()))
+
+	fmt.Printf("%q\n", data3)
+
+	entity.PrimaryKey.Serialize(&buffer)
+	data4 := base64.StdEncoding.EncodeToString([]byte(buffer.String()))
+
+	fmt.Printf("%q\n", data4)
+
 	//fmt.Printf(buffer.String())
 }
