@@ -223,6 +223,75 @@ type Transport struct {
 	Updated int64
 }
 
+type Nom_Pays struct {
+	Id      rune
+	Nom     string
+	Created int64
+	Updated int64
+}
+
+type Type_Localisation struct {
+	Id      rune
+	Nom     string
+	Created int64
+	Updated int64
+}
+
+type Localisation struct {
+	Id           rune
+	Type         Type_Localisation
+	Localisation string
+	Created      int64
+	Updated      int64
+}
+
+type Pays struct {
+	Id      rune
+	Nom     []Nom_Pays
+	Created int64
+	Updated int64
+}
+
+type Region struct {
+	Id      rune
+	Nom     string
+	Id_Pays Pays
+	Created int64
+	Updated int64
+}
+
+type Ville struct {
+	Id        rune
+	Nom       string
+	Id_Region Region
+	Created   int64
+	Updated   int64
+}
+
+type Code_Postal struct {
+	Id       rune
+	CP       string
+	Id_Ville Ville
+	Created  int64
+	Updated  int64
+}
+
+type Type_Adresse struct {
+	Id      rune
+	Nom     string
+	Created int64
+	Updated int64
+}
+
+type Adresse struct {
+	Id              rune
+	Id_Type_Adresse Type_Adresse
+	Id_Ville        Ville
+	Nom             string
+	Created         int64
+	Updated         int64
+}
+
 func IndexPage(c http.ResponseWriter, req *http.Request) {
 
 	result := "<html><body><form action='/login/' method='post'><table><tr><td><label for='login'><strong>Nom de compte</strong></label></td><td><input type='text' name='login' id='login'/></td></tr><tr><td><label for='pass'><strong>Mot de passe</strong></label></td><td><input type='password' name='pass' id='pass'/></td></tr></table><input type='submit' name='connexion' value='Se connecter'/></form></body></html>"
