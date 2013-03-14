@@ -261,11 +261,12 @@ type Region struct {
 }
 
 type Ville struct {
-	Id        rune
-	Nom       string
-	Id_Region Region
-	Created   int64
-	Updated   int64
+	Id              rune
+	Nom             string
+	Id_Region       Region
+	Created         int64
+	Updated         int64
+	Id_Localisation Localisation
 }
 
 type Code_Postal struct {
@@ -290,6 +291,30 @@ type Adresse struct {
 	Nom             string
 	Created         int64
 	Updated         int64
+	Id_Localisation Localisation
+}
+
+type Numero_Adresse struct {
+	Id              rune
+	Id_Adresse      Adresse
+	Numero          string
+	Created         int64
+	Updated         int64
+	Id_Localisation Localisation
+}
+
+type Place struct {
+	Id                  rune
+	Id_Localisation     Localisation
+	Id_Numero_Adresse_1 Numero_Adresse
+	Id_Numero_Adresse_2 Numero_Adresse
+	Id_Numero_Adresse_3 Numero_Adresse
+	Id_Numero_Adresse_4 Numero_Adresse
+	Id_Ville            Ville
+	CP                  Code_Postal
+	Pays                Pays
+	Created             int64
+	Updated             int64
 }
 
 func IndexPage(c http.ResponseWriter, req *http.Request) {
