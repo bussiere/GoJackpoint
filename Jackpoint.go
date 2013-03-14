@@ -208,6 +208,21 @@ type Admin_Private struct {
 	Updated               int64
 }
 
+type Type_Transport struct {
+	Id      rune
+	Nom     string
+	Created int64
+	Updated int64
+}
+
+type Transport struct {
+	Id      rune
+	Nom     string
+	Type    Type_Transport
+	Created int64
+	Updated int64
+}
+
 func IndexPage(c http.ResponseWriter, req *http.Request) {
 
 	result := "<html><body><form action='/login/' method='post'><table><tr><td><label for='login'><strong>Nom de compte</strong></label></td><td><input type='text' name='login' id='login'/></td></tr><tr><td><label for='pass'><strong>Mot de passe</strong></label></td><td><input type='password' name='pass' id='pass'/></td></tr></table><input type='submit' name='connexion' value='Se connecter'/></form></body></html>"
