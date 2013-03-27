@@ -26,16 +26,19 @@ func main() {
 
 	fmt.Printf("%q\n", data)
 
+	buffer = bytes.Buffer
 	entity.Serialize(&buffer)
 	data2 := base64.StdEncoding.EncodeToString([]byte(buffer.String()))
 
 	fmt.Printf("%q\n", data2)
 
+	buffer = bytes.Buffer
 	entity.PrivateKey.Serialize(&buffer)
 	data3 := base64.StdEncoding.EncodeToString([]byte(buffer.String()))
 
 	fmt.Printf("%q\n", data3)
 
+	buffer = bytes.Buffer
 	entity.PrimaryKey.Serialize(&buffer)
 	data4 := base64.StdEncoding.EncodeToString([]byte(buffer.String()))
 
